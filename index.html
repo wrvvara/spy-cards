@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Шпион — карточки по раундам</title>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; background: #f0f0f0; }
+    .card { margin-top: 30px; padding: 20px; border: 2px dashed #444; width: 320px; text-align: center; display: none; background: #fff; }
+    button, select, input { padding: 10px; margin-top: 15px; font-size: 16px; }
+    img { max-width: 100%; height: auto; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Игра "Шпион"</h1>
+  <label for="roundSelect">Выберите раунд:</label>
+  <select id="roundSelect">
+    <option value="1">Раунд 1</option>
+    <option value="2">Раунд 2</option>
+    <option value="3">Раунд 3</option>
+    <option value="4">Раунд 4</option>
+    <option value="5">Раунд 5</option>
+  </select>
+
+  <p>Введите своё имя:</p>
+  <input type="text" id="nameInput" placeholder="Имя">
+  <button onclick="getCard()">Получить карточку</button>
+
+  <div class="card" id="cardDisplay"></div>
+
+  <script>
+    const imageBase = "https://wrvvara.github.io/spy-cards/";
+
+    const rounds = {
+      1: Array(8).fill({ role: "не шпион", file: "Group 1000002945.png" }).concat([{ role: "шпион", file: "Group 1000002946.png" }]),
+      2: Array(8).fill({ role: "не шпион", file: "Group 1000002957.png" }).concat([{ role: "шпион", file: "Group 1000002948.png" }]),
+      3: Array(8).fill({ role: "не шпион", file: "Group 1000002950.png" }).concat([{ role: "шпион", file: "Group 1000002949.png" }]),
+      4: Array(8).fill({ role: "не шпион", file: "Group 1000002952.png" }).concat([{ role: "шпион", file: "Group 1000002951.png" }]),
+      5: Array(8).fill({ role: "не шпион", file: "Group 1000002954.png" }).concat([{ role: "шпион", file: "Group 1000002953.png" }])
+    };
+
+    const assigned = new Set();
+
+    function getCard() {
+      const name = document.getElementById('nameInput').value.trim();
+      const round = document.getElementById('roundSelect').value;
+
+      if (!name) {
+        alert("Пожалуйста, введите имя.");
+        return;
+      }
+
+      if (assigned.has(name + '_' + round)) {
+        alert("Вы уже получили карточку в этом раунде!");
+        return;
+      }
+
+      const pool = rounds[round];
+      if (!pool || pool.length === 0) {
+        alert("Карточки в этом раунде закончились.");
+        return;
+      }
+
+      const index = Math.floor(Math.random() * pool.length);
+      const card = pool.splice(index, 1)[0];
+      assigned.add(name + '_' + round);
+
+      const display = document.getElementById('cardDisplay');
+      display.innerHTML = `<strong>${name}</strong>, ваша карточка:<br><img src="${imageBase}${card.file}" alt="карточка">`;
+      display.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
